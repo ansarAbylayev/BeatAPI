@@ -1,0 +1,38 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Local database
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded/generated audio
+storage/originals/*
+storage/previews/*
+
+# Keep empty storage directories in Git
+!storage/originals/.gitkeep
+!storage/previews/.gitkeep
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log
