@@ -19,6 +19,15 @@ def get_beats():
 def get_count():
     return len(beats)
 
+@router.get("/genres")
+def get_genres():
+    genres = set()
+    for beat in beats:
+        genres.add(beat["genre"])
+    return list(genres)
+
+
+
 @router.get("/{beat_id}")
 def get_beat(beat_id: int):
     for beat in beats:
