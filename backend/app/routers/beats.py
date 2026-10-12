@@ -15,10 +15,16 @@ beats = [
 def get_beats():
     return beats
 
+@router.get("/count")
+def get_count():
+    return len(beats)
+
 @router.get("/{beat_id}")
 def get_beat(beat_id: int):
     for beat in beats:
         if beat["id"] == beat_id:
             return beat
     raise HTTPException(status_code=404, detail= "Beat not found")
+
+
 
