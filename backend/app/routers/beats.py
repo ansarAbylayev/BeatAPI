@@ -1,6 +1,5 @@
 from fastapi import APIRouter, HTTPException
 
-
 router = APIRouter(
     prefix="/beats",
     tags=["beats"],
@@ -16,17 +15,19 @@ beats = [
     {"id": 7, "name": "glass city", "creator": "Rasna", "bpm": 128, "genre": "hyperpop", "mood": "energetic"},
 ]
 
+
 @router.get("/")
-def get_beats(genre : str | None = None, min_bpm : int | None = None, max_bpm: int | None = None, mood : str | None = None):
+def get_beats(genre: str | None = None, min_bpm: int | None = None, max_bpm: int | None = None,
+              mood: str | None = None):
     """Get all beats, with optional filters by genre, mood and BPM range. """
     result = []
     for beat in beats:
         if genre and beat["genre"] != genre:
             continue
         # bounds are inclusive: min_bpm=140 keeps beats at exactly 140
-        if min_bpm and min_bpm > beat["bpm"]  :
+        if min_bpm and min_bpm > beat["bpm"]:
             continue
-        if max_bpm and max_bpm < beat["bpm"]  :
+        if max_bpm and max_bpm < beat["bpm"]:
             continue
         if mood and beat["mood"] != mood:
             continue
@@ -34,12 +35,11 @@ def get_beats(genre : str | None = None, min_bpm : int | None = None, max_bpm: i
     return result
 
 
-
-
 @router.get("/count")
 def get_count():
     """count the  total number of beats. """
     return len(beats)
+
 
 @router.get("/genres")
 def get_genres():
@@ -50,14 +50,10 @@ def get_genres():
     return list(genres)
 
 
-
 @router.get("/{beat_id}")
 def get_beat(beat_id: int):
     """get one beat by its id, gives 404 if not found. """
     for beat in beats:
         if beat["id"] == beat_id:
             return beat
-    raise HTTPException(status_code=404, detail= "Beat not found")
-
-
-
+    raise HTTPException(status_code=404, detail="Beat not found")
