@@ -7,13 +7,28 @@ router = APIRouter(
 )
 
 beats = [
-    {"id": 1, "name" : "melody55", "creator" : "Rasna", "bpm" : 162, "genre" :"rage", "mood" : "sad" },
-    {"id": 2, "name" : "melody68", "creator" : "Rasna", "bpm" : 160, "genre" :"rage", "mood" : "happy" },
+    {"id": 1, "name": "melody55", "creator": "Rasna", "bpm": 162, "genre": "rage", "mood": "sad"},
+    {"id": 2, "name": "melody68", "creator": "Rasna", "bpm": 160, "genre": "rage", "mood": "happy"},
+    {"id": 3, "name": "neon drift", "creator": "Ansar", "bpm": 148, "genre": "hyperpop", "mood": "happy"},
+    {"id": 4, "name": "slow burn", "creator": "Ansar", "bpm": 85, "genre": "lofi", "mood": "sad"},
+    {"id": 5, "name": "midnight tape", "creator": "Rasna", "bpm": 92, "genre": "lofi", "mood": "calm"},
+    {"id": 6, "name": "cold blocks", "creator": "Ansar", "bpm": 140, "genre": "drill", "mood": "dark"},
+    {"id": 7, "name": "glass city", "creator": "Rasna", "bpm": 128, "genre": "hyperpop", "mood": "energetic"},
 ]
 
 @router.get("/")
-def get_beats():
+def get_beats(genre = None):
+    if genre:
+        genre_beats = []
+        for beat in beats:
+            if genre == beat["genre"]:
+                genre_beats.append(beat)
+        return genre_beats
+
+
     return beats
+
+
 
 @router.get("/count")
 def get_count():
