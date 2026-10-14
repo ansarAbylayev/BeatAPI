@@ -1,5 +1,6 @@
 from sqlmodel import create_engine, SQLModel, Session
-
+from fastapi import Depends
+from typing import Annotated
 engine = create_engine("sqlite:///beats.db")
 
 def create_db_and_tables():
@@ -8,4 +9,6 @@ def create_db_and_tables():
 def get_session():
     with Session(engine) as session:
         yield session
+SessionDep = Annotated[Session, Depends(get_session)]
+
 
