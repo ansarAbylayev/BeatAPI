@@ -1,4 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends, FastAPI, Query
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+from app.database import SessionDep
+from app.models import Beat
+
 
 router = APIRouter(
     prefix="/beats",
@@ -51,9 +55,9 @@ def get_genres():
 
 
 @router.get("/{beat_id}")
-def get_beat(beat_id: int):
+def get_beat(beat_id: int, session: SessionDep) -> Beat:
     """get one beat by its id, gives 404 if not found. """
-    for beat in beats:
-        if beat["id"] == beat_id:
-            return beat
-    raise HTTPException(status_code=404, detail="Beat not found")
+    beat = session.get(Beat, beat_id)
+    if not beat:
+        raise HTTPException(status_code=404, detail="Beat not found")
+    return beat
