@@ -17,16 +17,18 @@ beats = [
 ]
 
 @router.get("/")
-def get_beats(genre = None):
-    if genre:
-        genre_beats = []
-        for beat in beats:
-            if genre == beat["genre"]:
-                genre_beats.append(beat)
-        return genre_beats
+def get_beats(genre : str = None, min_bpm : int = None, max_bpm: int = None):
+    result = []
+    for beat in beats:
+        if genre and beat["genre"] != genre:
+            continue
+        if min_bpm and min_bpm > beat["bpm"]  :
+            continue
+        if max_bpm and max_bpm < beat["bpm"]  :
+            continue
+        result.append(beat)
+    return result
 
-
-    return beats
 
 
 
