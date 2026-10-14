@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from app.routers import beats
 
+from app.routers import beats
+from app.database import create_db_and_tables
 
 app = FastAPI(
     title="Beat API",
@@ -11,6 +12,7 @@ app = FastAPI(
 
 app.include_router(beats.router)
 
+create_db_and_tables()
 
 @app.get("/")
 def root():
