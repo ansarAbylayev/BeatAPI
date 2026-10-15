@@ -1,7 +1,10 @@
 from sqlmodel import create_engine, SQLModel, Session
 from fastapi import Depends
 from typing import Annotated
-engine = create_engine("sqlite:///beats.db")
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
+engine = create_engine(f"sqlite:///{BASE_DIR}/beats.db")
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
