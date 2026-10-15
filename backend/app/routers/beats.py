@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends, FastAPI, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from fastapi import APIRouter, HTTPException
+from sqlmodel import select
 from app.database import SessionDep
 from app.models import Beat
 
@@ -31,18 +31,19 @@ def get_beats(session: SessionDep, genre: str | None = None, min_bpm: int | None
 
 
 @router.get("/count")
-def get_count():
+def get_count(session: SessionDep):
     """count the  total number of beats. """
+    query = select(Beat)
+    beats = session.exec(query).all()
     return len(beats)
 
 
 @router.get("/genres")
-def get_genres():
+def get_genres(session: SessionDep):
     """Get all unique genres from the beat list."""
-    genres = set()
-    for beat in beats:
-        genres.add(beat["genre"])
-    return list(genres)
+    query = select(Beat.genre)
+    genres = session.exec(query).all()
+    return list(set(genres))
 
 
 @router.get("/{beat_id}")
