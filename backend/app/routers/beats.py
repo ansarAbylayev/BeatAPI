@@ -60,3 +60,13 @@ def add_beat(beat: Beat, session: SessionDep):
     session.commit()
     session.refresh(beat)
     return beat
+
+@router.delete("/{beat_id}")
+def delete_beat(beat_id: int, session: SessionDep):
+    """deletes the beat by its id. """
+    beat = session.get(Beat, beat_id)
+    if not beat:
+        raise HTTPException(status_code=404, detail="Beat not found")
+    session.delete(beat)
+    session.commit()
+    return "successfully deleted"
