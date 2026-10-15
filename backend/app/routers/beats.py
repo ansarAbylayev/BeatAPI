@@ -56,6 +56,7 @@ def get_beat(beat_id: int, session: SessionDep) -> Beat:
 
 @router.post("/")
 def add_beat(beat: Beat, session: SessionDep) -> Beat:
+    """Create a new beat and return it with its assigned id."""
     session.add(beat)
     session.commit()
     session.refresh(beat)
