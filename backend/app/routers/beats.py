@@ -31,7 +31,7 @@ def get_beats(session: SessionDep, genre: str | None = None, min_bpm: int | None
 
 
 @router.get("/count")
-def get_count(session: SessionDep):
+def get_count(session: SessionDep) -> int:
     """count the  total number of beats. """
     query = select(Beat)
     beats = session.exec(query).all()
@@ -39,7 +39,7 @@ def get_count(session: SessionDep):
 
 
 @router.get("/genres")
-def get_genres(session: SessionDep):
+def get_genres(session: SessionDep) -> list[str]:
     """Get all unique genres from the beat list."""
     query = select(Beat.genre)
     genres = session.exec(query).all()
@@ -55,18 +55,18 @@ def get_beat(beat_id: int, session: SessionDep) -> Beat:
     return beat
 
 @router.post("/")
-def add_beat(beat: Beat, session: SessionDep):
+def add_beat(beat: Beat, session: SessionDep) -> Beat:
     session.add(beat)
     session.commit()
     session.refresh(beat)
     return beat
 
 @router.delete("/{beat_id}")
-def delete_beat(beat_id: int, session: SessionDep):
+def delete_beat(beat_id: int, session: SessionDep)-> dict:
     """deletes the beat by its id. """
     beat = session.get(Beat, beat_id)
     if not beat:
         raise HTTPException(status_code=404, detail="Beat not found")
     session.delete(beat)
     session.commit()
-    return "successfully deleted"
+    return {"message": "successfully deleted"}
