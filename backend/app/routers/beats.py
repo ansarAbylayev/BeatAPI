@@ -9,34 +9,25 @@ router = APIRouter(
     tags=["beats"],
 )
 
-beats = [
-    {"id": 1, "name": "melody55", "creator": "Rasna", "bpm": 162, "genre": "rage", "mood": "sad"},
-    {"id": 2, "name": "melody68", "creator": "Rasna", "bpm": 160, "genre": "rage", "mood": "happy"},
-    {"id": 3, "name": "neon drift", "creator": "Ansar", "bpm": 148, "genre": "hyperpop", "mood": "happy"},
-    {"id": 4, "name": "slow burn", "creator": "Ansar", "bpm": 85, "genre": "lofi", "mood": "sad"},
-    {"id": 5, "name": "midnight tape", "creator": "Rasna", "bpm": 92, "genre": "lofi", "mood": "calm"},
-    {"id": 6, "name": "cold blocks", "creator": "Ansar", "bpm": 140, "genre": "drill", "mood": "dark"},
-    {"id": 7, "name": "glass city", "creator": "Rasna", "bpm": 128, "genre": "hyperpop", "mood": "energetic"},
-]
+
 
 
 @router.get("/")
-def get_beats(genre: str | None = None, min_bpm: int | None = None, max_bpm: int | None = None,
-              mood: str | None = None):
+def get_beats(session: SessionDep, genre: str | None = None, min_bpm: int | None = None, max_bpm: int | None = None,
+              mood: str | None = None ) -> list[Beat]:
     """Get all beats, with optional filters by genre, mood and BPM range. """
-    result = []
-    for beat in beats:
-        if genre and beat["genre"] != genre:
-            continue
+    query = select(Beat)
+    if genre:
+        query = query.where(Beat.genre == genre )
+    if min_bpm:
         # bounds are inclusive: min_bpm=140 keeps beats at exactly 140
-        if min_bpm and min_bpm > beat["bpm"]:
-            continue
-        if max_bpm and max_bpm < beat["bpm"]:
-            continue
-        if mood and beat["mood"] != mood:
-            continue
-        result.append(beat)
-    return result
+        query = query.where(Beat.bpm >= min_bpm)
+    if max_bpm:
+        query = query.where(Beat.bpm <= max_bpm)
+    if mood:
+        query = query.where(Beat.mood == mood )
+    beats = session.exec(query).all()
+    return beats
 
 
 @router.get("/count")
