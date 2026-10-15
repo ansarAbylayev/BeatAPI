@@ -53,3 +53,10 @@ def get_beat(beat_id: int, session: SessionDep) -> Beat:
     if not beat:
         raise HTTPException(status_code=404, detail="Beat not found")
     return beat
+
+@router.post("/")
+def add_beat(beat: Beat, session: SessionDep):
+    session.add(beat)
+    session.commit()
+    session.refresh(beat)
+    return beat
