@@ -38,3 +38,19 @@ def test_get_beat_not_found():
     response = client.get("/beats/999")
     assert response.json()["detail"] == "Beat not found"
     assert response.status_code == 404
+
+def test_delete_beat_by_id():
+    created = client.post("/beats", json = {
+        "name" : "melody55",
+        "creator" : "Rasna",
+        "bpm" : 162,
+        "genre" : "rage",
+        "mood" : "sad"
+    })
+    beat_id = created.json()["id"]
+    response=  client.delete(f"/beats/{beat_id}")
+    assert response.status_code == 200
+    assert response.json()["message"] == "successfully deleted"
+    after_delete = client.get(f"/beats/{beat_id}")
+    assert after_delete.status_code == 404
+    assert after_delete.json()["detail"] == "Beat not found"
