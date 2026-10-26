@@ -20,10 +20,10 @@ def get_beats(session: SessionDep, genre: str | None = None, min_bpm: int | None
     query = select(Beat)
     if genre:
         query = query.where(Beat.genre == genre )
-    if min_bpm:
+    if min_bpm is not None:
         # bounds are inclusive: min_bpm=140 keeps beats at exactly 140
         query = query.where(Beat.bpm >= min_bpm)
-    if max_bpm:
+    if max_bpm is not None:
         query = query.where(Beat.bpm <= max_bpm)
     if mood:
         query = query.where(Beat.mood == mood )
