@@ -25,6 +25,7 @@ def test_get_beat_not_found(client):
     assert response.status_code == 404
 
 def test_delete_beat_by_id(client):
+    """checks that the beat was really deleted"""
     created = client.post("/beats", json = {
         "name" : "melody55",
         "creator" : "Rasna",
@@ -53,6 +54,7 @@ def test_get_beats(client):
     assert len(response.json()) > 0
 
 def test_filter_by_genre(client):
+    """creates 2 beats with different genres so the filter has something to exclude"""
     client.post("/beats", json = {
         "name" : "melody55",
         "creator" : "Rasna",
