@@ -66,3 +66,24 @@ def test_get_beats():
     response = client.get("/beats/")
     assert response.status_code == 200
     assert len(response.json()) > 0
+
+def test_filter_by_genre():
+    client.post("/beats", json = {
+        "name" : "melody55",
+        "creator" : "Rasna",
+        "bpm" : 162,
+        "genre" : "rage",
+        "mood" : "sad"
+    })
+    client.post("/beats", json = {
+        "name" : "melody56",
+        "creator" : "Rasna",
+        "bpm" : 162,
+        "genre" : "lofi",
+        "mood" : "sad"
+    })
+    response = client.get("/beats?genre=lofi")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
+    for beat in response.json():
+        assert beat["genre"] == "lofi"
