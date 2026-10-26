@@ -1,27 +1,12 @@
-from fastapi.testclient import TestClient
-from app.main import app
-from sqlmodel import create_engine,  SQLModel, Session
-from app.database import get_session
-from sqlalchemy import StaticPool
-client = TestClient(app)
-
-test_engine = create_engine(
-    "sqlite:///:memory:",
-    connect_args={"check_same_thread": False},
-    poolclass= StaticPool)
-SQLModel.metadata.create_all(test_engine)
-def get_test_session():
-    with Session(test_engine) as session:
-        yield session
-app.dependency_overrides[get_session] = get_test_session
 
 
 
-def test_get_count():
+
+def test_get_count(client):
     response = client.get("/beats/count")
     assert response.status_code == 200
 
-def test_get_beat_by_id():
+def test_get_beat_by_id(client):
     created = client.post("/beats", json = {
         "name" : "melody55",
         "creator" : "Rasna",
@@ -34,12 +19,12 @@ def test_get_beat_by_id():
     assert response.status_code == 200
     assert response.json()["id"] == beat_id
 
-def test_get_beat_not_found():
+def test_get_beat_not_found(client):
     response = client.get("/beats/999")
     assert response.json()["detail"] == "Beat not found"
     assert response.status_code == 404
 
-def test_delete_beat_by_id():
+def test_delete_beat_by_id(client):
     created = client.post("/beats", json = {
         "name" : "melody55",
         "creator" : "Rasna",
@@ -55,7 +40,7 @@ def test_delete_beat_by_id():
     assert after_delete.status_code == 404
     assert after_delete.json()["detail"] == "Beat not found"
 
-def test_get_beats():
+def test_get_beats(client):
     client.post("/beats", json = {
         "name" : "melody55",
         "creator" : "Rasna",
@@ -67,7 +52,7 @@ def test_get_beats():
     assert response.status_code == 200
     assert len(response.json()) > 0
 
-def test_filter_by_genre():
+def test_filter_by_genre(client):
     client.post("/beats", json = {
         "name" : "melody55",
         "creator" : "Rasna",
@@ -89,7 +74,7 @@ def test_filter_by_genre():
         assert beat["genre"] == "lofi"
 
 
-def test_create_beat_invalid():
+def test_create_beat_invalid(client):
     response = client.post("/beats", json = {
         "creator" : "Rasna",
         "bpm" : 162,
@@ -98,7 +83,7 @@ def test_create_beat_invalid():
     })
     assert response.status_code == 422
 
-def test_delete_beat_not_found():
+def test_delete_beat_not_found(client):
     response = client.delete("/beats/999")
     assert response.status_code == 404
     assert response.json()["detail"] == "Beat not found"
