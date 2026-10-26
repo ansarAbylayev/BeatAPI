@@ -11,3 +11,9 @@ def test_get_beat_by_id():
     response = client.get("/beats/1")
     assert response.json()["id"] == 1
     assert response.status_code == 200
+
+
+def test_get_beat_not_found():
+    response = client.get("/beats/999")
+    assert response.json()["detail"] == "Beat not found"
+    assert response.status_code == 404
