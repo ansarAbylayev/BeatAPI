@@ -54,3 +54,15 @@ def test_delete_beat_by_id():
     after_delete = client.get(f"/beats/{beat_id}")
     assert after_delete.status_code == 404
     assert after_delete.json()["detail"] == "Beat not found"
+
+def test_get_beats():
+    client.post("/beats", json = {
+        "name" : "melody55",
+        "creator" : "Rasna",
+        "bpm" : 162,
+        "genre" : "rage",
+        "mood" : "sad"
+    })
+    response = client.get("/beats/")
+    assert response.status_code == 200
+    assert len(response.json()) > 0
