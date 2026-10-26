@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from app.database import SessionDep
 from app.models import Beat
-from app.schemas import BeatCreate
+from app.schemas import BeatCreate, BeatRead
 
 
 router = APIRouter(
@@ -15,7 +15,7 @@ router = APIRouter(
 
 @router.get("/")
 def get_beats(session: SessionDep, genre: str | None = None, min_bpm: int | None = None, max_bpm: int | None = None,
-              mood: str | None = None ) -> list[Beat]:
+              mood: str | None = None ) -> list[BeatRead]:
     """Get all beats, with optional filters by genre, mood and BPM range. """
     query = select(Beat)
     if genre:
@@ -48,7 +48,7 @@ def get_genres(session: SessionDep) -> list[str]:
 
 
 @router.get("/{beat_id}")
-def get_beat(beat_id: int, session: SessionDep) -> Beat:
+def get_beat(beat_id: int, session: SessionDep) -> BeatRead:
     """get one beat by its id, gives 404 if not found. """
     beat = session.get(Beat, beat_id)
     if not beat:
@@ -56,7 +56,7 @@ def get_beat(beat_id: int, session: SessionDep) -> Beat:
     return beat
 
 @router.post("/")
-def add_beat(beat: BeatCreate, session: SessionDep) -> Beat:
+def add_beat(beat: BeatCreate, session: SessionDep) -> BeatRead:
     """Create a new beat and return it with its assigned id."""
     db_beat = Beat.model_validate(beat)
     session.add(db_beat)
