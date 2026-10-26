@@ -55,7 +55,7 @@ def get_beat(beat_id: int, session: SessionDep) -> BeatRead:
         raise HTTPException(status_code=404, detail="Beat not found")
     return beat
 
-@router.post("/")
+@router.post("/", status_code=201)
 def add_beat(beat: BeatCreate, session: SessionDep) -> BeatRead:
     """Create a new beat and return it with its assigned id."""
     db_beat = Beat.model_validate(beat)
