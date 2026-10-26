@@ -87,3 +87,13 @@ def test_filter_by_genre():
     assert len(response.json()) > 0
     for beat in response.json():
         assert beat["genre"] == "lofi"
+
+
+def test_create_beat_invalid():
+    response = client.post("/beats", json = {
+        "creator" : "Rasna",
+        "bpm" : 162,
+        "genre" : "rage",
+        "mood" : "sad"
+    })
+    assert response.status_code == 422
