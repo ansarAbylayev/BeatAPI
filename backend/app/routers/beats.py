@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from app.database import SessionDep
 from app.models import Beat
+from app.schemas import BeatCreate
 
 
 router = APIRouter(
@@ -55,12 +56,13 @@ def get_beat(beat_id: int, session: SessionDep) -> Beat:
     return beat
 
 @router.post("/")
-def add_beat(beat: Beat, session: SessionDep) -> Beat:
+def add_beat(beat: BeatCreate, session: SessionDep) -> Beat:
     """Create a new beat and return it with its assigned id."""
-    session.add(beat)
+    db_beat = Beat.model_validate(beat)
+    session.add(db_beat)
     session.commit()
-    session.refresh(beat)
-    return beat
+    session.refresh(db_beat)
+    return db_beat
 
 @router.delete("/{beat_id}")
 def delete_beat(beat_id: int, session: SessionDep)-> dict:
