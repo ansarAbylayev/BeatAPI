@@ -97,3 +97,8 @@ def test_create_beat_invalid():
         "mood" : "sad"
     })
     assert response.status_code == 422
+
+def test_delete_beat_not_found():
+    response = client.delete("/beats/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Beat not found"
