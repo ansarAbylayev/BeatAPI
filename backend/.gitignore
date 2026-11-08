@@ -1,0 +1,4 @@
+storage/originals/*
+storage/previews/*
+!storage/originals/.gitkeep
+!storage/previews/.gitkeep
