@@ -82,6 +82,8 @@ def upload_file(beat_id: int, session: SessionDep, file: UploadFile) -> BeatRead
     beat = session.get(Beat, beat_id)
     if not beat:
         raise HTTPException(status_code=404, detail="Beat not found")
+    if not file.content_type.startswith("audio/") :
+        raise HTTPException(status_code=400, detail="Only audio files are allowed")
     contents = file.file.read()
     my_uuid = uuid.uuid4()
     names = file.filename.split(".")
