@@ -75,12 +75,17 @@ def delete_beat(beat_id: int, session: SessionDep)-> dict:
     return {"message": "successfully deleted"}
 
 @router.post("/{beat_id}/upload")
-def upload_file(beat_id: int, session: SessionDep, file: UploadFile):
+def upload_file(beat_id: int, session: SessionDep, file: UploadFile) -> BeatRead:
+    """upload an audiofile for a beat and store its path, 404 if not found"""
     beat = session.get(Beat, beat_id)
     if not beat:
         raise HTTPException(status_code=404, detail="Beat not found")
     contents = file.file.read()
-    with open(f"storage/originals/{file.filename}","wb") as f:
+    path = f"storage/originals/{file.filename}"
+    with open(path,"wb") as f:
         f.write(contents)
-
-
+    beat.file_path = path
+    session.add(beat)
+    session.commit()
+    session.refresh(beat)
+    return beat
