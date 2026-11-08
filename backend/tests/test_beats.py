@@ -101,3 +101,43 @@ def test_create_beat(client):
     assert response.status_code == 201
     assert  response.json()["name"] == "melody55"
     assert "id" in response.json()
+
+def test_upload_beat(client):
+    created = client.post("/beats", json = {
+        "name" : "melody55",
+        "creator" : "Rasna",
+        "bpm" : 162,
+        "genre" : "rage",
+        "mood" : "sad"
+    })
+    beat_id = created.json()["id"]
+    response = client.post(f"/beats/{beat_id}/upload",
+    files = {"file": ("test.mp3", b"fake audio data", "audio/mpeg")}
+                           )
+    assert response.status_code == 200
+
+def test_upload_invalid_type(client):
+    created = client.post("/beats", json={
+        "name": "melody55",
+        "creator": "Rasna",
+        "bpm": 162,
+        "genre": "rage",
+        "mood": "sad"
+    })
+    beat_id = created.json()["id"]
+    response = client.post(f"/beats/{beat_id}/upload",
+                           files={"file": ("test.txt", b"fake audio data", "text/plain")}
+                           )
+    assert response.status_code == 400
+
+def test_download_no_file(client):
+    created = client.post("/beats", json={
+            "name": "melody55",
+            "creator": "Rasna",
+            "bpm": 162,
+            "genre": "rage",
+            "mood": "sad"
+        })
+    beat_id = created.json()["id"]
+    response = client.get(f"/beats/{beat_id}/download")
+    assert response.status_code == 404
