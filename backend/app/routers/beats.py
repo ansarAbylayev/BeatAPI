@@ -2,6 +2,8 @@ import uuid
 
 from fastapi import APIRouter, HTTPException, UploadFile
 from sqlmodel import select
+from starlette.responses import FileResponse
+
 from app.database import SessionDep
 from app.models import Beat
 from app.schemas import BeatCreate, BeatRead
@@ -99,4 +101,13 @@ def upload_file(beat_id: int, session: SessionDep, file: UploadFile) -> BeatRead
     session.refresh(beat)
     return beat
 
+@router.get("/{beat_id}/download")
+def download_file(beat_id: int, session: SessionDep):
+    """returns audio file to play, 404 if the beat or its file is missing"""
+    beat = session.get(Beat, beat_id)
+    if not beat:
+        raise HTTPException(status_code=404, detail="Beat not found")
+    if not beat.file_path:
+        raise HTTPException(status_code=404, detail="No file uploaded in this beat")
+    return FileResponse(beat.file_path)
 
