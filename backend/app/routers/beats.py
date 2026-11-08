@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException, UploadFile
 from sqlmodel import select
 from app.database import SessionDep
@@ -81,7 +83,10 @@ def upload_file(beat_id: int, session: SessionDep, file: UploadFile) -> BeatRead
     if not beat:
         raise HTTPException(status_code=404, detail="Beat not found")
     contents = file.file.read()
-    path = f"storage/originals/{file.filename}"
+    my_uuid = uuid.uuid4()
+    names = file.filename.split(".")
+    full_name = f"{my_uuid}.{names[-1]}"
+    path = f"storage/originals/{full_name}"
     with open(path,"wb") as f:
         f.write(contents)
     beat.file_path = path
@@ -89,3 +94,5 @@ def upload_file(beat_id: int, session: SessionDep, file: UploadFile) -> BeatRead
     session.commit()
     session.refresh(beat)
     return beat
+
+
