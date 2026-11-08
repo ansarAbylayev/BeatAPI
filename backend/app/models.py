@@ -8,3 +8,4 @@ class Beat(SQLModel, table=True):
     bpm: int
     genre: str
     mood: str
+    file_path: str  | None = Field(default=None)
