@@ -85,6 +85,8 @@ def upload_file(beat_id: int, session: SessionDep, file: UploadFile) -> BeatRead
     if not file.content_type.startswith("audio/") :
         raise HTTPException(status_code=400, detail="Only audio files are allowed")
     contents = file.file.read()
+    if len(contents) > 50 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="File too large")
     my_uuid = uuid.uuid4()
     names = file.filename.split(".")
     full_name = f"{my_uuid}.{names[-1]}"
