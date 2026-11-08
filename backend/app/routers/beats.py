@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile
 from sqlmodel import select
 from app.database import SessionDep
 from app.models import Beat
@@ -73,3 +73,14 @@ def delete_beat(beat_id: int, session: SessionDep)-> dict:
     session.delete(beat)
     session.commit()
     return {"message": "successfully deleted"}
+
+@router.post("/{beat_id}/upload")
+def upload_file(beat_id: int, session: SessionDep, file: UploadFile):
+    beat = session.get(Beat, beat_id)
+    if not beat:
+        raise HTTPException(status_code=404, detail="Beat not found")
+    contents = file.file.read()
+    with open(f"storage/originals/{file.filename}","wb") as f:
+        f.write(contents)
+
+
