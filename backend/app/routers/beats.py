@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, UploadFile
 from sqlmodel import select
 from starlette.responses import FileResponse
 
+from app.audio import make_preview
 from app.database import SessionDep
 from app.models import Beat
 from app.schemas import BeatCreate, BeatRead
@@ -96,6 +97,7 @@ def upload_file(beat_id: int, session: SessionDep, file: UploadFile) -> BeatRead
     with open(path,"wb") as f:
         f.write(contents)
     beat.file_path = path
+    beat.preview_path = make_preview(path)
     session.add(beat)
     session.commit()
     session.refresh(beat)
