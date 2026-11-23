@@ -141,3 +141,15 @@ def test_download_no_file(client):
     beat_id = created.json()["id"]
     response = client.get(f"/beats/{beat_id}/download")
     assert response.status_code == 404
+
+def test_preview_no_file(client):
+    created = client.post("/beats", json={
+            "name": "melody55",
+            "creator": "Rasna",
+            "bpm": 162,
+            "genre": "rage",
+            "mood": "sad"
+        })
+    beat_id = created.json()["id"]
+    response = client.get(f"/beats/{beat_id}/preview")
+    assert response.status_code == 404
