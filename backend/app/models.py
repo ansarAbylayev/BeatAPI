@@ -9,3 +9,4 @@ class Beat(SQLModel, table=True):
     genre: str
     mood: str
     file_path: str  | None = Field(default=None)
+    preview_path: str | None = Field(default=None)
