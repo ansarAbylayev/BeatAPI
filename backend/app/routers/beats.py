@@ -113,3 +113,13 @@ def download_file(beat_id: int, session: SessionDep):
         raise HTTPException(status_code=404, detail="No file uploaded in this beat")
     return FileResponse(beat.file_path)
 
+@router.get("/{beat_id}/preview")
+def preview_file(beat_id: int, session: SessionDep):
+    """returns audio file to play, 404 if the beat or its file is missing"""
+    beat = session.get(Beat, beat_id)
+    if not beat:
+        raise HTTPException(status_code=404, detail="Beat not found")
+    if not beat.preview_path:
+        raise HTTPException(status_code=404, detail="No preview for this beat")
+    return FileResponse(beat.preview_path)
+
